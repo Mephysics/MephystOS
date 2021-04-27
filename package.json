@@ -1,0 +1,32 @@
+{
+  "name": "mephystos",
+  "version": "4.0.0",
+  "description": "MephystOS BOT",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "eslint ."
+  },
+  "author": "Mephysics",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/opus": "^0.4.0",
+    "axios": "^0.21.1",
+    "discord-player": "^4.0.5",
+    "discord.js": "^12.5.3",
+    "dotenv": "^8.2.0",
+    "ffmpeg": "0.0.4",
+    "ffmpeg-static": "^4.3.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.33",
+    "novelcovid": "^1.2.7",
+    "reconlx": "^1.2.41",
+    "snakecord": "^1.0.6",
+    "weather-js": "^2.0.0",
+    "ytdl-core": "^4.5.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.25.0"
+  }
+}

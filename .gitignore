@@ -1,0 +1,11 @@
+# modules
+node_modules
+
+# env
+.env
+
+# config
+config
+
+# require
+require.js
