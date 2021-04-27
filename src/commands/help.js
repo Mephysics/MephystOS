@@ -4,7 +4,6 @@ module.exports = {
     name: 'help',
 
     execute(message) {
-        if (message.author.id !== process.env.OWNERID) return message.channel.send('**[ERR_OPERATION_FAILED]** BOT Sedang dalam pengembangan');
             message.channel.send({
                 embed: {
                     color: '#89e0dc',
