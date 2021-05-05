@@ -155,6 +155,24 @@ client.on('message', async message => {
         message.channel.send(serverinfoembed);
     }
 
+    if (command === 'link') {
+        const serverid = client.guilds.cache.get('332472484572037124');
+        const embedmessage = new Discord.MessageEmbed()
+
+        .setColor('#89e0dc')
+        .setTitle(`${serverid.name} Server`)
+        .setThumbnail(message.guild.iconURL({format : 'png', dynamic : true, size : 4096}))
+        .setDescription(`**${process.env.DISCORDLINK}**`)
+        .setFooter(`Direquest oleh ${message.author.username}`, `${message.author.avatarURL({format : 'png', dynamic : true, size : 4096})}`)
+        .setTimestamp()
+
+        embedmessage.addField('Nama', serverid.name, true)
+        .addField('Owner', serverid.owner, true)
+        .addField('Member', serverid.memberCount, true)
+
+        message.channel.send(embedmessage)
+    }
+
     if (command === 'avatar') {
         const user = message.mentions.users.first() || message.author;
         const avatarembed = new Discord.MessageEmbed()
@@ -194,7 +212,7 @@ client.on('message', async message => {
         .setColor('#89e0dc')
         .setTitle('BOT Version')
         .setThumbnail(`${message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096})}`)
-        .setDescription(`Nama = **${message.client.user.username}**\n\n Versi : **${botversion}**\n\nKeyword : **/**\n\nDev : **Mephysics, Zensanz**\n\nBahasa : **JavaScript**\n\nPackage : **Discord.js**`)
+        .setDescription(`Nama = **${message.client.user.username}**\n\nVersi : **${botversion}**\n\nKeyword : **/**\n\nDev : **Mephysics, Zensanz**\n\nBahasa : **JavaScript**\n\nPackage : **Discord.js**`)
         .setFooter(`Direquest oleh ${message.author.username}`, `${message.author.avatarURL({format : 'png', dynamic : true, size : 4096})}`)
         .setTimestamp()
         message.channel.send(aboutbotembed);
@@ -285,10 +303,6 @@ client.on('message', async message => {
         channellog.send(channellogembed)
     }
 
-    if (command === 'link') {
-        message.channel.send('https://discord.gg/AMgsC4U')
-    }
-
     if (command === 'kick') {
         if (!message.member.roles.cache.get('390481400576475136')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini');
         const user = message.mentions.users.first();
@@ -338,14 +352,16 @@ client.on('message', async message => {
         const channel = client.channels.cache.get('544569999294201866');
         const user = message.author.id
         const emoji = client.emojis.cache.get('835987657892298802');
+        const embednickname = new Discord.MessageEmbed() .setColor('#00ff00') .setAuthor(`${message.member.nickname} Joined`, message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096})) .setDescription(`**${emoji} - ${message.member.nickname} telah join ke server**`) .setTimestamp()
         
         message.member.roles.add(register);
         let channellog = client.channels.cache.get(process.env.CHANNELLOGID)
+        if (message.member.nickname) return channellog.send(embednickname)
         let channellogembed = new Discord.MessageEmbed()
 
         .setColor('#00ff00')
-        .setAuthor(`${message.member.nickname} Joined`, message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096}))
-        .setDescription(`**${emoji} - ${message.member.nickname} telah join ke server**`)
+        .setAuthor(`${message.author.username} Joined`, message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096}))
+        .setDescription(`**${emoji} - ${message.author.username} telah join ke server**`)
         .setTimestamp()
 
         channellog.send(channellogembed)
@@ -366,6 +382,7 @@ client.on('message', async message => {
     if (command === 'skip') {
         if (!message.member.voice.channel) return message.channel.send(`Kamu tidak divoice channel !`);
         if (message.guild.me.voice.channel && message.member.voice.channel.id !== message.guild.me.voice.channel.id) return message.channel.send(`Kamu tidak divoice channel yang sama !`);
+        if (!client.player.getQueue(message)) return message.channel.send('Tidak ada music yang berjalan !');
         client.player.skip(message);
         message.channel.send('Lagu telah diskip !')
     }
@@ -373,6 +390,7 @@ client.on('message', async message => {
     if (command === 'stop') {
         if (!message.member.voice.channel) return message.channel.send(`Kamu tidak divoice channel !`);
         if (message.guild.me.voice.channel && message.member.voice.channel.id !== message.guild.me.voice.channel.id) return message.channel.send(`Kamu tidak divoice channel yang sama !`);
+        if (!client.player.getQueue(message)) return message.channel.send('Tidak ada music yang berjalan !');
         client.player.stop(message);
         message.channel.send('Lagu telah distop !')
     }
@@ -388,6 +406,7 @@ client.on('message', async message => {
     if (command === 'resume') {
         if (!message.member.voice.channel) return message.channel.send(`Kamu tidak divoice channel !`);
         if (message.guild.me.voice.channel && message.member.voice.channel.id !== message.guild.me.voice.channel.id) return message.channel.send(`Kamu tidak divoice channel yang sama !`);
+        if (!client.player.getQueue(message)) return message.channel.send('Tidak ada music yang berjalan !');
         if (!client.player.getQueue(message).paused) return message.channel.send(`Lagu sedang berlangsung !`);
         client.player.resume(message);
         message.channel.send(`Lagu ${client.player.getQueue(message).playing.title} dilanjutkan !`);
@@ -396,6 +415,7 @@ client.on('message', async message => {
     if (command === 'volume') {
         if (!message.member.voice.channel) return message.channel.send(`Kamu tidak divoice channel !`);
         if (message.guild.me.voice.channel && message.member.voice.channel.id !== message.guild.me.voice.channel.id) return message.channel.send(`Kamu tidak divoice channel yang sama !`);
+        if (!client.player.getQueue(message)) return message.channel.send('Tidak ada music yang berjalan !');
         if (!args[0] || isNaN(args[0]) || args[0] === 'string') return message.channel.send(`Berikan nomor untuk merubah volume !`);
         if (Math.round(parseInt(args[0])) < 1 || Math.round(parseInt(args[0])) > 100) return message.channel.send(`berikan nomor 1 - 100 !`);
         client.player.setVolume(message, parseInt(args[0]));
@@ -407,6 +427,7 @@ client.on('message', async message => {
         client.player.getQueue(message)
         const queue = client.player.getQueue(message);
         if (message.guild.me.voice.channel && message.member.voice.channel.id !== message.guild.me.voice.channel.id) return message.channel.send(`Kamu tidak divoice channel yang sama !`);
+        if (!client.player.getQueue(message)) return message.channel.send('Tidak ada music yang berjalan !');
         message.channel.send(`**Music Queue**\nSedang berlangsung : **${queue.playing.title}** | **${queue.playing.author}**\n\n` + (queue.tracks.map((track, i) => {
             return `**#${i + 1}** - **${track.title}** | **${track.author}** (direquest oleh : **${track.requestedBy.username}**)`
         }).slice(0, 5).join('\n') + `\n\n${queue.tracks.length > 5 ? `dan **${queue.tracks.length - 5}** lagu lain...` : `Playlist **${queue.tracks.length}**...`}`));
@@ -415,6 +436,7 @@ client.on('message', async message => {
     if (command === 'repeat') {
         if (!message.member.voice.channel) return message.channel.send(`Kamu tidak divoice channel !`);
         if (message.guild.me.voice.channel && message.member.voice.channel.id !== message.guild.me.voice.channel.id) return message.channel.send(`Kamu tidak divoice channel yang sama !`);
+        if (!client.player.getQueue(message)) return message.channel.send('Tidak ada music yang berjalan !');
         if (args.join(" ").toLowerCase() === 'queue') {
             if (client.player.getQueue(message).loopMode) {
                 client.player.setLoopMode(message, false);
@@ -437,6 +459,7 @@ client.on('message', async message => {
     if (command === 'nowplaying') {
         if (!message.member.voice.channel) return message.channel.send(`Kamu tidak divoice channel !`);
         if (message.guild.me.voice.channel && message.member.voice.channel.id !== message.guild.me.voice.channel.id) return message.channel.send(`Kamu tidak divoice channel yang sama !`);
+        if (!client.player.getQueue(message)) return message.channel.send('Tidak ada music yang berjalan !');
         const track = client.player.nowPlaying(message);
         message.channel.send({
             embed: {
@@ -527,12 +550,14 @@ client.on('message', async message => {
         })
         message.channel.send('**Locked !!**');
         let channellog = client.channels.cache.get(process.env.CHANNELLOGID);
+        const embednickname = new Discord.MessageEmbed() .setColor('#ff0000') .setAuthor(`Channel Lock`, message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096})) .setDescription(`**🔓 - Channel ${message.member.voice.channel.name} Locked**`) .setFooter(`Locked by ${message.member.nickname}`, `${message.author.avatarURL({format : 'png', dynamic : true, size : 4096})}`) .setFooter(`Locked by ${message.member.nickname}`, `${message.author.avatarURL({format : 'png', dynamic : true, size : 4096})}`) .setTimestamp()
+        if (message.member.nickname) return channellog.send(embednickname)
         let channellogembed = new Discord.MessageEmbed()
 
         .setColor('#ff0000')
         .setAuthor(`Channel Lock`, message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096}))
         .setDescription(`**🔒 - Channel ${message.member.voice.channel.name} Locked**`)
-        .setFooter(`Locked by ${message.member.nickname}`, `${message.author.avatarURL({format : 'png', dynamic : true, size : 4096})}`)
+        .setFooter(`Locked by ${message.author.username}`, `${message.author.avatarURL({format : 'png', dynamic : true, size : 4096})}`)
         .setTimestamp()
 
         channellog.send(channellogembed)
@@ -545,12 +570,14 @@ client.on('message', async message => {
         })
         message.channel.send('**Unlocked !!**');
         let channellog = client.channels.cache.get(process.env.CHANNELLOGID);
+        const embednickname = new Discord.MessageEmbed() .setColor('#00ff00') .setAuthor(`Channel Unlock`, message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096})) .setDescription(`**🔓 - Channel ${message.member.voice.channel.name} Unlocked**`) .setFooter(`Unlocked by ${message.member.nickname}`, `${message.author.avatarURL({format : 'png', dynamic : true, size : 4096})}`) .setTimestamp()
+        if (message.member.nickname) return channellog.send(embednickname)
         let channellogembed = new Discord.MessageEmbed()
 
         .setColor('#00ff00')
         .setAuthor(`Channel Unlock`, message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096}))
         .setDescription(`**🔓 - Channel ${message.member.voice.channel.name} Unlocked**`)
-        .setFooter(`Unlocked by ${message.member.nickname}`, `${message.author.avatarURL({format : 'png', dynamic : true, size : 4096})}`)
+        .setFooter(`Unlocked by ${message.author.username}`, `${message.author.avatarURL({format : 'png', dynamic : true, size : 4096})}`)
         .setTimestamp()
 
         channellog.send(channellogembed)
@@ -565,12 +592,14 @@ client.on('message', async message => {
 
         let channellog = client.channels.cache.get(process.env.CHANNELLOGID);
         let emoji = client.emojis.cache.find(emoji => emoji.name === "gear");
+        const embednickname = new Discord.MessageEmbed() .setColor('#00ff00') .setAuthor(`Bitrate Changed`, message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096})) .setDescription(`**${emoji} - Bitrate room (${message.member.voice.channel.name} ) telah diubah ke ${bitrateargs}**`) .setFooter(`Diubah oleh ${message.member.nickname}`, `${message.author.avatarURL({format : 'png', dynamic : true, size : 4096})}`)
+        if (message.member.nickname) return channellog.send(embednickname)
         let channellogembed = new Discord.MessageEmbed()
 
         .setColor('#00ff00')
         .setAuthor(`Bitrate Changed`, message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096}))
         .setDescription(`**${emoji} - Bitrate room (${message.member.voice.channel.name} ) telah diubah ke ${bitrateargs}**`)
-        .setFooter(`Diubah oleh ${message.member.nickname}`, `${message.author.avatarURL({format : 'png', dynamic : true, size : 4096})}`)
+        .setFooter(`Diubah oleh ${message.author.username}`, `${message.author.avatarURL({format : 'png', dynamic : true, size : 4096})}`)
         .setTimestamp()
 
         channellog.send(channellogembed)

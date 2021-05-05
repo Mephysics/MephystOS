@@ -1,6 +1,6 @@
 {
   "name": "mephystos",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "MephystOS BOT",
   "main": "index.js",
   "scripts": {
