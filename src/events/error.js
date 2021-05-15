@@ -7,9 +7,9 @@ module.exports = (client, error, message) => {
             message.channel.send(`Kamu tidak berada divoice channel !`);
             break;
         case 'UnableToJoin':
-            message.channel.send(`Error : **Bad Request**`);
+            message.channel.send(`**[1] - Bad Request**`);
             break;
         default:
-            message.channel.send(`Error : **Undefined**`);
+            message.channel.send(`**[0] - Error !!**`);
     }
 };
