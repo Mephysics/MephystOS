@@ -42,8 +42,6 @@ client.on('ready', () => {
         `Memakai masker`,
         `Mencuci tangan`,
         `Menjaga jarak`,
-        `Menghindari kerumunan`,
-        `Membatasi mobilisasi`,
     ];
     
     let i = 0;
@@ -71,6 +69,7 @@ client.on('message', async message => {
 
     if (command === 'report') {
         if (message.guild) return message.react('❎') || message.channel.send('Declined')
+        if (!args[0]) return message.channel.send(`**[2] - ERR_TIDAK_ADA_ARGS**`);
         if (reportcooldown.has(message.author.id)) {
             return message.channel.send('**Kamu telah mengirimkan laporan hari ini, silahkan kirim laporan lain besok.**') && message.react('❎')
         } else {
@@ -189,7 +188,7 @@ client.on('message', async message => {
     if (command === 'color') {
         const Mod = message.member.guild.roles.cache.get('815283420044197888');
         if (!message.member.roles.cache.get('817813111339352064')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini');
-        if (!args[0]) return message.channel.send(`Berikan args untuk mengganti warna`);
+        if (!args[0]) return message.channel.send(`**[2] - ERR_TIDAK_ADA_ARGS**`);
         Mod.edit({
             color: args[0]
         })
@@ -199,7 +198,7 @@ client.on('message', async message => {
     if (command === 'name') {
         const Mod = message.member.guild.roles.cache.get('815283420044197888');
         if (!message.member.roles.cache.get('817813111339352064')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini');
-        if (!args[0]) return message.channel.send(`Berikan args untuk mengganti nama`);
+        if (!args[0]) return message.channel.send(`**[2] - ERR_TIDAK_ADA_ARGS**`);
         Mod.edit({
             name: args.join(" ")
         })
@@ -212,7 +211,7 @@ client.on('message', async message => {
         .setColor('#89e0dc')
         .setTitle('BOT Version')
         .setThumbnail(`${message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096})}`)
-        .setDescription(`Nama = **${message.client.user.username}**\n\nVersi : **${botversion}**\n\nKeyword : **/**\n\nDev : **Mephysics, Zensanz**\n\nBahasa : **JavaScript**\n\nPackage : **Discord.js**`)
+        .setDescription(`Nama : **${message.client.user.username}**\n\nVersi : **${botversion}**\n\nKeyword : **/**\n\nDev : **Mephysics, Zensanz**\n\nBahasa : **JavaScript**\n\nPackage : **Discord.js**\n\nInvite to server : **https://mephysics.live**`)
         .setFooter(`Direquest oleh ${message.author.username}`, `${message.author.avatarURL({format : 'png', dynamic : true, size : 4096})}`)
         .setTimestamp()
         message.channel.send(aboutbotembed);
@@ -517,7 +516,7 @@ client.on('message', async message => {
         await weather.find({search: kota, degreeType: degreeType}, function(err, result) {
             if(err) console.log(err);
             console.log(JSON.stringify(result, null, 2));
-            if (!kota) return message.channel.send('**Berikan nama kota**')
+            if (!kota) return message.channel.send('**[2] - ERR_TIDAK_ADA_ARGS**')
             if (err || result === undefined || result.length === 0) return message.channel.send('**Kota tidak ditemukan**')
             
             let current = result[0].current;
@@ -585,7 +584,7 @@ client.on('message', async message => {
 
     if (command === 'bitrate') {
         const bitrateargs = args[0]
-        if (!args[0] || isNaN(args[0]) || args[0] === 'string') return message.channel.send(`Berikan nomor untuk merubah bitrate`);
+        if (!args[0] || isNaN(args[0]) || args[0] === 'string') return message.channel.send(`**[2] - ERR_TIDAK_ADA_ARGS**`);
         if (Math.round(parseInt(args[0])) < 8000 || Math.round(parseInt(args[0])) > 96000) return message.channel.send(`berikan nomor 8000 - 96000 !`);
         message.member.voice.channel.setBitrate(bitrateargs)
         message.channel.send(`Bitrate telah diubah ke **${bitrateargs}** !`);
@@ -642,9 +641,7 @@ client.on('message', async message => {
     }
 
     if (command === 'corona') { 
-        if (!args.length) {
-            return message.channel.send(`Berikan args pada command\n\nContoh : /corona indonesia`);
-        }
+        if (!args.length) return message.channel.send(`**[2] - ERR_TIDAK_ADA_ARGS**`);
         const coronacountries = await track.countries(args.join(' '))
         const countriesembed = new Discord.MessageEmbed()
 
@@ -670,7 +667,7 @@ client.on('message', async message => {
         client.commands.get(command).execute(message, args);
     } catch (error) {
         console.error(error);
-        message.reply('**Error !!**');
+        message.reply('**[0] - Error !!**');
     }
 
 });
