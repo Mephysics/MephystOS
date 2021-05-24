@@ -17,7 +17,7 @@ const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const reportcooldown = new Set();
 
-const { Player } = require("discord-player");
+const { Player } = require('discord-player');
 const player = new Player(client);
 client.player = player;
 
@@ -36,14 +36,16 @@ for (const file of events) {
 
 client.on('ready', () => {
 
+    console.log('Hello, World!');
+
     const presencelist = [
         `Version ${botversion} | ${prefix}help`, 
-        `${process.env.DISCORDLINK}| ${prefix}help`,
+        `${process.env.DISCORDLINK} | ${prefix}help`,
         `Memakai masker`,
         `Mencuci tangan`,
         `Menjaga jarak`,
     ];
-    
+
     let i = 0;
     setInterval(() => {
         const index = Math.floor(i);
@@ -68,7 +70,7 @@ client.on('message', async message => {
     const command = args.shift().toLowerCase();
 
     if (command === 'report') {
-        if (message.guild) return message.react('❎') || message.channel.send('Declined')
+        if (message.guild) return message.react('❎') && message.channel.send('**Declined**')
         if (!args[0]) return message.channel.send(`**[2] - ERR_TIDAK_ADA_ARGS**`);
         if (reportcooldown.has(message.author.id)) {
             return message.channel.send('**Kamu telah mengirimkan laporan hari ini, silahkan kirim laporan lain besok.**') && message.react('❎')
