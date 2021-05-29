@@ -10,6 +10,9 @@ const weather = require('weather-js');
 const packagejson = require('./package.json');
 const botversion = packagejson.version;
 
+const osu = require('node-osu');
+const osuApi = new osu.Api(process.env.OSU_API);
+
 const { NovelCovid } = require('novelcovid');
 const track = new NovelCovid();
 
@@ -45,11 +48,11 @@ client.on('ready', () => {
         `Mencuci tangan`,
         `Menjaga jarak`,
     ];
-
+    
     let i = 0;
     setInterval(() => {
         const index = Math.floor(i);
-        client.user.setActivity(presencelist[index], { type: 'LISTENING', url: 'https://www.twitch.tv/discord' });
+        client.user.setActivity(presencelist[index], { type: 'LISTENING', url: 'https://www.twitch.tv/discord', });
         i = i + 1;
         console.log(presencelist[index]);
         if (i === presencelist.length) i = i - presencelist.length;
@@ -511,6 +514,37 @@ client.on('message', async message => {
         snakeGame.newGame(message)
     }
 
+    if (command === 'osu') {
+        const osuargs = args.join(' ')
+        const user = args[0]
+        const mode = args[1]
+        if (!osuargs) return message.channel.send(`**Parameter : ${prefix}osu <user> <mode>\n\nuser : osu username\n\nmode : 1 (osu) 2 (taiko) 3 (osumania)**`)
+        if (!mode) return message.channel.send('**Mode tidak ditemukan**')
+        const data = await osuApi.getUser({
+            u: user, m: mode
+        })
+        if (!data) return message.channel.send('**Data tidak ditemukan**')
+        if (!data.pp.rank || !data.accuracy === null) return message.channel.send('**Data tidak ditemukan**')
+        const flagemoji = data.country.toLowerCase()
+        const osuembed = new Discord.MessageEmbed()
+
+        .setColor('#CE0F3D')
+        .setTitle('OSU')
+        .setThumbnail(`https://s.ppy.sh/a/${data.id}`)
+        .setDescription(`:flag_${flagemoji}: **${data.name}**`)
+        .setFooter(`Direquest oleh ${message.author.username}`, `${message.author.avatarURL({format : 'png', dynamic : true, size : 4096})}`)
+        .setTimestamp()
+
+        osuembed.addField(`Nama`, data.name, true)
+        .addField(`Rank`, data.pp.rank, true)
+        .addField(`Accuracy`, data.accuracy, true)
+        .addField(`Joined`, data.raw_joinDate, true)
+        .addField(`ID`, data.id, true)
+        .addField(`Country`, data.country, true)
+
+        message.channel.send(osuembed);
+    }
+
     if (command === 'weather') {
         let kota = args.join(" ");
         let degreeType = 'C';
@@ -671,7 +705,7 @@ client.on('message', async message => {
         console.error(error);
         message.reply('**[0] - Error !!**');
     }
-
+    
 });
 
 client.login(process.env.CLIENT_TOKEN);
