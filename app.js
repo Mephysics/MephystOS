@@ -20,6 +20,22 @@ const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const reportcooldown = new Set();
 
+const ms = require('ms')
+const { GiveawaysManager } = require('discord-giveaways');
+const manager = new GiveawaysManager(client, {
+    storage: './database.json',
+    updateCountdownEvery: 5000,
+    hasGuildMembersIntent: true,
+    default: {
+        botsCanWin: false,
+        embedColor: '#89E0DC',
+        embedColorEnd: '#FF0000',
+        reaction: '🎉'
+    }
+});
+
+client.giveawaysManager = manager;
+
 const { Player } = require('discord-player');
 const player = new Player(client);
 client.player = player;
@@ -72,6 +88,18 @@ client.on('message', async message => {
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
 
+    if (message.channel.type === 'dm') {
+        let dmchannel = client.channels.cache.get(process.env.CHANNELLOGPRIVATE);
+        let dmembed = new Discord.MessageEmbed()
+
+        .setColor('#89e0dc')
+        .setAuthor(message.author.username, message.author.avatarURL({format : 'png', dynamic : true, size : 4096}))
+        .setDescription(message.content)
+        .setTimestamp()
+
+        dmchannel.send(dmembed)
+    }
+
     if (command === 'report') {
         if (message.guild) return message.react('❎') && message.channel.send('**Declined**')
         if (!args[0]) return message.channel.send(`**[2] - ERR_TIDAK_ADA_ARGS**`);
@@ -85,7 +113,7 @@ client.on('message', async message => {
         }
 
         const reportargs = args.join(" ");
-        const channeltarget = client.channels.cache.get('547076285872996353');
+        const channeltarget = client.channels.cache.get(process.env.CHANNELLOGPRIVATE);
         channeltarget.send(reportargs)
         message.react('✅');
 
@@ -94,7 +122,7 @@ client.on('message', async message => {
         let channellogembed = new Discord.MessageEmbed()
 
         .setColor('#ff0000')
-        .setAuthor(`Bug Report`, message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096}))
+        .setAuthor(`Bug Report`, message.author.avatarURL({format : 'png', dynamic : true, size : 4096}))
         .setDescription(`**${emoji} - Laporan Bug**\n\nNama : **${message.author.username}**\nReport ID : **${message.id}**\nBug : **${reportargs}**`)
         .setTimestamp()
 
@@ -301,7 +329,7 @@ client.on('message', async message => {
 
         .setColor('#ff0000')
         .setAuthor(`${mentionsuser.nickname} Warning`, message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096}))
-        .setDescription(`**⚠️ - ${mentionsuser.nickname} telah diwarn oleh ${message.member.nickname}**`)
+        .setDescription(`**⚠️ - ${mentionsuser.username} telah diwarn oleh ${message.member.username}**`)
         .setTimestamp()
 
         channellog.send(channellogembed)
@@ -525,22 +553,21 @@ client.on('message', async message => {
         })
         if (!data) return message.channel.send('**Data tidak ditemukan**')
         if (!data.pp.rank || !data.accuracy === null) return message.channel.send('**Data tidak ditemukan**')
-        const flagemoji = data.country.toLowerCase()
         const osuembed = new Discord.MessageEmbed()
 
         .setColor('#CE0F3D')
-        .setTitle('OSU')
+        .setTitle(`OSU ${data.name} Profile`)
         .setThumbnail(`https://s.ppy.sh/a/${data.id}`)
-        .setDescription(`:flag_${flagemoji}: **${data.name}**`)
-        .setFooter(`Direquest oleh ${message.author.username}`, `${message.author.avatarURL({format : 'png', dynamic : true, size : 4096})}`)
+        .setDescription(`:flag_${data.country.toLowerCase()}: **${data.name}**`)
+        .setFooter(`https://osu.ppy.sh/users/${data.id}`, `https://s.ppy.sh/a/${data.id}`)
         .setTimestamp()
 
         osuembed.addField(`Nama`, data.name, true)
         .addField(`Rank`, data.pp.rank, true)
+        .addField(`Level`, data.level, true)
         .addField(`Accuracy`, data.accuracy, true)
         .addField(`Joined`, data.raw_joinDate, true)
-        .addField(`ID`, data.id, true)
-        .addField(`Country`, data.country, true)
+        .addField(`Performance Point`, data.pp.raw, true)
 
         message.channel.send(osuembed);
     }
@@ -575,6 +602,74 @@ client.on('message', async message => {
             .addField('Kecepatan angin', current.windspeed, true)
 
             message.channel.send(cuaca);
+        });
+    }
+
+    if (command === 'user') {
+        if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini')
+        client.users.cache.get(args[0]).send(args[1]);
+    }
+
+    if (command === 'giveaway') {
+        if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini')
+        if (!args[0]) return message.channel.send(`${prefix}giveaway **<mentionschannel>** <time> <winner> <args>`);
+        if (!args.join(' ')) return message.channel.send(`**${prefix}giveaway <mentionschannel> <time> <winner> <args>**`);
+        const channelsend = message.mentions.channels.first()
+        client.giveawaysManager.start(channelsend, {
+            time: ms(args[1]),
+            winnerCount: parseInt(args[2]),
+            prize: args.slice(3).join(' '),
+            messages: {
+                giveaway: `\`\`\`${args.slice(3).join(' ')} !!\`\`\``,
+                giveawayEnded: '\`\`\`Ended !!\`\`\`',
+                inviteToParticipate: 'React emoji 🎉 untuk berpartisipasi!',
+                timeRemaining: 'Waktu tersisa: **{duration}**',
+                winMessage: 'Selamat, {winners}! Kamu memenangkan **{prize}** !!\nHadiah akan dikirim lewat DM oleh BOT',
+                embedFooter: args.slice(3).join(' '),
+                noWinner: 'Tidak Valid',
+                winners: 'winner(s) ',
+                endedAt: 'Ended at',
+                units: {
+                    seconds: 'detik',
+                    minutes: 'menit',
+                    hours: 'jam',
+                    days: 'hari',
+                    pluralS: false
+                }
+            },
+        }).then((gData) => {
+            console.log(gData);
+        });
+    }
+
+    if (command === 'reroll') {
+        if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini')
+        if (!args.join(' ')) return message.channel.send(`${prefix}reroll <msgid>`);
+        const messageID = args[0];
+        client.giveawaysManager.reroll(messageID).then(() => {
+            message.channel.send('Rerolled');
+        }).catch((err) => {
+            message.channel.send('ID tidak ditemukan');
+        });
+    }
+
+    if (command === 'end') {
+        if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini')
+        const messageID = args[0];
+        client.giveawaysManager.end(messageID).then(() => {
+            message.channel.send('**Success !!**');
+        }).catch((err) => {
+            message.channel.send('ID tidak ditemukan');
+        });
+    }
+
+    if (command === 'delete-giveaway') {
+        if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini')
+        const messageID = args[0];
+        client.giveawaysManager.delete(messageID).then(() => {
+            message.channel.send('**Success !!**');
+        }).catch((err) => {
+            message.channel.send('ID tidak ditemukan');
         });
     }
 
@@ -705,7 +800,7 @@ client.on('message', async message => {
         console.error(error);
         message.reply('**[0] - Error !!**');
     }
-    
+
 });
 
 client.login(process.env.CLIENT_TOKEN);
