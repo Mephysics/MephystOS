@@ -1,0 +1,27 @@
+name: ESLint
+
+on:
+  push:
+    branches: [ v4 ]
+  pull_request:
+    branches: [ v4 ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        node-version: [14.15.4]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: install dependencies
+      run: npm install
+    - name: run lint
+      run: npm test
