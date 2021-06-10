@@ -573,6 +573,7 @@ client.on('message', async message => {
     }
 
     if (command === 'weather') {
+        if (!args[0]) return message.channel.send(`**[2] - ERR_TIDAK_ADA_ARGS**`);
         let kota = args.join(" ");
         let degreeType = 'C';
 
