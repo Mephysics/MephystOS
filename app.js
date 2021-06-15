@@ -607,7 +607,7 @@ client.on('message', async message => {
 
     if (command === 'user') {
         if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini')
-        client.users.cache.get(args[0]).send(args[1]);
+        client.users.cache.get(args[0]).send(args.slice(1).join(" "));
     }
 
     if (command === 'giveaway') {
