@@ -607,7 +607,7 @@ client.on('message', async message => {
 
     if (command === 'user') {
         if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini')
-        client.users.cache.get(args[0]).send(args[1]);
+        client.users.cache.get(args[0]).send(args.slice(1).join(" "));
     }
 
     if (command === 'giveaway') {
@@ -798,7 +798,7 @@ client.on('message', async message => {
         client.commands.get(command).execute(message, args);
     } catch (error) {
         console.error(error);
-        message.reply('**[0] - Error !!**');
+        message.reply(process.env.DEFAULT_ERROR);
     }
 
 });
