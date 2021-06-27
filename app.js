@@ -56,23 +56,26 @@ for (const file of events) {
 client.on('ready', () => {
 
     console.log('Hello, World!');
+    client.on('ready', () => {
 
-    const presencelist = [
-        `Version ${botversion} | ${prefix}help`, 
-        `${process.env.DISCORDLINK} | ${prefix}help`,
-        `Memakai masker`,
-        `Mencuci tangan`,
-        `Menjaga jarak`,
-    ];
+        console.log('Hello, World!');
     
-    let i = 0;
-    setInterval(() => {
-        const index = Math.floor(i);
-        client.user.setActivity(presencelist[index], { type: 'LISTENING', url: 'https://www.twitch.tv/discord', });
-        i = i + 1;
-        console.log(presencelist[index]);
-        if (i === presencelist.length) i = i - presencelist.length;
-    }, 5000);
+        const presencelist = [
+            `Version ${botversion} | ${prefix}help`, 
+            `${process.env.DISCORDLINK} | ${prefix}help`,
+            `Running on ${client.guilds.cache.size} server`,
+        ];
+        
+        let i = 0;
+        setInterval(() => {
+            const index = Math.floor(i);
+            client.user.setActivity(presencelist[index], { type: 'COMPETING', url: 'https://www.twitch.tv/discord', });
+            i = i + 1;
+            console.log(presencelist[index]);
+            if (i === presencelist.length) i = i - presencelist.length;
+        }, 5000);
+        
+    });
 });
 
 client.on('message', async message => {
@@ -392,8 +395,9 @@ client.on('message', async message => {
         let channellogembed = new Discord.MessageEmbed()
 
         .setColor('#00ff00')
-        .setAuthor(`${message.author.username} Joined`, message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096}))
+        .setAuthor(`Member Joined`, message.author.avatarURL({format : 'png', dynamic : true, size : 4096}))
         .setDescription(`**${emoji} - ${message.author.username} telah join ke server**`)
+        .setFooter(message.author.username , message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096}))
         .setTimestamp()
 
         channellog.send(channellogembed)
