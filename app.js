@@ -55,7 +55,6 @@ for (const file of events) {
 
 client.on('ready', () => {
 
-    console.log('Hello, World!');
     client.on('ready', () => {
 
         console.log('Hello, World!');
