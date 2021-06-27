@@ -55,26 +55,23 @@ for (const file of events) {
 
 client.on('ready', () => {
 
-    client.on('ready', () => {
+    console.log('Hello, World!');
 
-        console.log('Hello, World!');
+    const presencelist = [
+        `Version ${botversion} | ${prefix}help`, 
+        `${process.env.DISCORDLINK} | ${prefix}help`,
+        `Running on ${client.guilds.cache.size} server`,
+    ];
     
-        const presencelist = [
-            `Version ${botversion} | ${prefix}help`, 
-            `${process.env.DISCORDLINK} | ${prefix}help`,
-            `Running on ${client.guilds.cache.size} server`,
-        ];
-        
-        let i = 0;
-        setInterval(() => {
-            const index = Math.floor(i);
-            client.user.setActivity(presencelist[index], { type: 'COMPETING', url: 'https://www.twitch.tv/discord', });
-            i = i + 1;
-            console.log(presencelist[index]);
-            if (i === presencelist.length) i = i - presencelist.length;
-        }, 5000);
-        
-    });
+    let i = 0;
+    setInterval(() => {
+        const index = Math.floor(i);
+        client.user.setActivity(presencelist[index], { type: 'COMPETING', url: 'https://www.twitch.tv/discord', });
+        i = i + 1;
+        console.log(presencelist[index]);
+        if (i === presencelist.length) i = i - presencelist.length;
+    }, 5000);
+    
 });
 
 client.on('message', async message => {
