@@ -37,12 +37,12 @@ npm start
 
 ## Security
 
-|Version|Availability|
+|Version|Vulnerability|
 |-|-|
-|4.0.x|:white_check_mark: |
-|3.0.x|:x:|
-|2.0.x|:x:|
-|1.0.x|:x:|
+|latest|:white_check_mark:|
+|4.2.x|:x:|
+|4.1.x|:x:|
+|4.0.x|:x:|
 
 Klik redirect untuk info lebih lanjut <a href="https://github.com/Mephysics/MephystOS/security/policy">**Redirect**</a>
 
