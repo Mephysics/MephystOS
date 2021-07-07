@@ -1,11 +1,15 @@
-# Available Version
+# Vulnerability
 
-|Version|Availability|
+|Version|Vulnerability|
 |-|-|
-|4.3.x|:x:|
-|4.2.x|:white_check_mark:|
-|4.1.x|:white_check_mark:|
-|4.0.x|:white_check_mark:|
+|4.2.2|:white_check_mark:|
+|4.2.1|:x:|
+|4.2.0|:x:|
+|4.1.0|:x:|
+|4.0.3|:x:|
+|4.0.2|:x:|
+|4.0.1|:x:|
+|4.0.0|:x:|
 
 ## Report for bug
 
