@@ -9,6 +9,7 @@ const weather = require('weather-js');
 
 const packagejson = require('./package.json');
 const botversion = packagejson.version;
+const botauthor = packagejson.author;
 
 const osu = require('node-osu');
 const osuApi = new osu.Api(process.env.OSU_API);
@@ -243,7 +244,7 @@ client.on('message', async message => {
         .setColor('#89e0dc')
         .setTitle('BOT Version')
         .setThumbnail(`${message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096})}`)
-        .setDescription(`Nama : **${message.client.user.username}**\n\nVersi : **${botversion}**\n\nKeyword : **/**\n\nDev : **Mephysics, Zensanz**\n\nBahasa : **JavaScript**\n\nPackage : **Discord.js**\n\nInvite to server : **https://mephysics.live**`)
+        .setDescription(`Nama : **${message.client.user.username}**\n\nVersi : **${botversion}**\n\nKeyword : **/**\n\nDev : ${botauthor}\n\nBahasa : **JavaScript**\n\nPackage : **Discord.js**\n\nInvite to server : **https://mephysics.live**`)
         .setFooter(`Direquest oleh ${message.author.username}`, `${message.author.avatarURL({format : 'png', dynamic : true, size : 4096})}`)
         .setTimestamp()
         message.channel.send(aboutbotembed);
@@ -271,9 +272,9 @@ client.on('message', async message => {
 
     if (command === 'mute') {
         if (!message.member.hasPermission('MANAGE_ROLES')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini');
-        const muterole = message.guild.roles.cache.get('577108844610715665');
+        const muterole = message.guild.roles.cache.get(process.env.MUTEROLE);
         const mentionsmember = message.mentions.members.first();
-        if (mentionsmember.roles.cache.get('577108844610715665')) return message.channel.send('**User masih dimute**');
+        if (mentionsmember.roles.cache.get(process.env.MUTEROLE)) return message.channel.send('**User masih dimute**');
         mentionsmember.roles.add(muterole);
         message.channel.send(`**<@${mentionsmember.id}>** telah dimute oleh **<@${message.author.id}>**`);
         
@@ -289,10 +290,10 @@ client.on('message', async message => {
     }
 
     if (command === 'unmute') {
-        if (!message.member.hasPermission("MANAGE_ROLES")) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini');
-        const muterole = message.guild.roles.cache.get('577108844610715665');
+        if (!message.member.hasPermission('MANAGE_ROLES')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini');
+        const muterole = message.guild.roles.cache.get(process.env.MUTEROLE);
         const mentionsmember = message.mentions.members.first();
-        if (!mentionsmember.roles.cache.get('577108844610715665')) return message.channel.send('**User tidak dimute**');
+        if (!mentionsmember.roles.cache.get(process.env.MUTEROLE)) return message.channel.send('**User tidak dimute**');
         mentionsmember.roles.remove(muterole);
         message.channel.send(`**<@${mentionsmember.id}>** telah diunmute oleh **<@${message.author.id}>**`);
 
@@ -308,7 +309,7 @@ client.on('message', async message => {
     }
 
     if (command === 'warn') {
-        if (!message.member.hasPermission("MANAGE_ROLES")) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini');
+        if (!message.member.hasPermission('MANAGE_ROLES')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini');
         const mentionsuser = message.mentions.members.first();
         const mentionsavatar = message.mentions.users.first();
         if (!message.mentions.users.first()) return message.channel.send('**Mention user sebelum memberikan alasan\n\n```/warn @Mephysto SPAM```**')
@@ -335,7 +336,7 @@ client.on('message', async message => {
     }
 
     if (command === 'kick') {
-        if (!message.member.roles.cache.get('390481400576475136')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini');
+        if (!message.member.hasPermission('KICK_MEMBERS')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini');
         const user = message.mentions.users.first();
         if (user) {
           const member = message.guild.members.resolve(user);
@@ -354,7 +355,7 @@ client.on('message', async message => {
     }
 
     if (command === 'ban') {
-        if (!message.member.roles.cache.get('390481400576475136')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini');
+        if (!message.member.hasPermission('BAN_MEMBERS')) return message.channel.send('Kamu tidak memiliki izin untuk menggunakan command ini');
         const user = message.mentions.users.first();
         if (user) {
           const member = message.guild.members.resolve(user);
@@ -787,8 +788,8 @@ client.on('message', async message => {
     }
 
     if (command === 'debug') {
-        if (message.author.id !== process.env.OWNERID || 527415996508536832 || 321979003898429443) return message.channel.send('**Debug hanya bisa dilakukan oleh Dev**');
-        console.log(`${Math.round(client.ws.ping)}ms. Latensi ${Date.now() - message.createdTimestamp}ms.`);
+        if (message.author.id !== '321979003898429443') return message.channel.send('**Debug hanya bisa dilakukan oleh Dev**');
+        message.author.send(`API ${Math.round(client.ws.ping)}ms. Latensi ${Date.now() - message.createdTimestamp}ms.`)
         message.react('✅');
     }
 
