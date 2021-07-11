@@ -787,7 +787,7 @@ client.on('message', async message => {
     }
 
     if (command === 'debug') {
-        if (message.author.id !== process.env.OWNERID) return message.channel.send('**Debug hanya bisa dilakukan oleh Dev**');
+        if (message.author.id !== process.env.OWNERID || 527415996508536832 || 321979003898429443) return message.channel.send('**Debug hanya bisa dilakukan oleh Dev**');
         console.log(`${Math.round(client.ws.ping)}ms. Latensi ${Date.now() - message.createdTimestamp}ms.`);
         message.react('✅');
     }
