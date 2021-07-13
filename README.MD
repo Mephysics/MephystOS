@@ -3,10 +3,11 @@
 <p align="center">
 <img src="https://cdn.discordapp.com/attachments/578227690822303755/812266660550410250/daqhbqc-11fef862-5825-4771-ba53-e2da2baace98.png" width="256" height="256">
 <p align="center">
-<img src='https://circleci.com/gh/Mephysics/MephystOS.svg?style=svg' alt='CircleCI Status'>
-<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/Mephysics/MephystOS.svg">
-<img alt="GitHub" src="https://img.shields.io/github/license/Mephysics/MephystOS.svg">
-<img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/Mephysics/MephystOS.svg">
+<img alt="CircleCI Status" src="https://circleci.com/gh/Mephysics/MephystOS.svg?style=svg" >
+<img alt="GitHub Repo size" src="https://img.shields.io/github/repo-size/Mephysics/MephystOS.svg">
+<img alt="GitHub License" src="https://img.shields.io/github/license/Mephysics/MephystOS.svg">
+<img alt="GitHub Package version" src="https://img.shields.io/github/package-json/v/Mephysics/MephystOS.svg">
+<img alt="GitHub ESLint" src="https://github.com/Mephysics/MephystOS/actions/workflows/CI.yml/badge.svg">
 
 ***
 <h1 align="center">MephystOS</h1>
