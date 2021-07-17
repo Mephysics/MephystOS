@@ -61,7 +61,7 @@ client.on('ready', () => {
     const presencelist = [
         `Version ${botversion} | ${prefix}help`, 
         `${process.env.DISCORDLINK} | ${prefix}help`,
-        `Running on ${client.guilds.cache.size} server`,
+        `Running on ${client.guilds.cache.size} server | ${prefix}help`,
     ];
     
     let i = 0;
@@ -377,16 +377,14 @@ client.on('message', async message => {
 
     if (command === 'register') {
         message.delete({timeout: 5000});
-        if (!message.member.roles.cache.get('544095817531654164')) return message.channel.send('**Kamu sudah teregistrasi**')
-        if (message.member.roles.cache.get('390482000877977600')) return message.channel.send('**Kamu sudah teregistrasi**')
-        const register = message.guild.roles.cache.get('390482000877977600');
-        const unregister = message.guild.roles.cache.get('544095817531654164');
-        const channel = client.channels.cache.get('544569999294201866');
+        if (!message.member.roles.cache.get(process.env.UNREGISTER_ID)) return message.channel.send('**Kamu sudah teregistrasi**')
+        if (message.member.roles.cache.get(process.env.REGISTER_ID)) return message.channel.send('**Kamu sudah teregistrasi**')
+        const channel = client.channels.cache.get(process.env.GENERALCHAT);
         const user = message.author.id
         const emoji = client.emojis.cache.get('835987657892298802');
         const embednickname = new Discord.MessageEmbed() .setColor('#00ff00') .setAuthor(`${message.member.nickname} Joined`, message.client.user.avatarURL({format : 'png', dynamic : true, size : 4096})) .setDescription(`**${emoji} - ${message.member.nickname} telah join ke server**`) .setTimestamp()
         
-        message.member.roles.add(register);
+        message.member.roles.add(process.env.REGISTER_ID);
         let channellog = client.channels.cache.get(process.env.CHANNELLOGID)
         if (message.member.nickname) return channellog.send(embednickname)
         let channellogembed = new Discord.MessageEmbed()
@@ -402,7 +400,7 @@ client.on('message', async message => {
         .then(message => {
             message.delete({timeout: 5000})
         })
-        message.member.roles.remove(unregister);
+        message.member.roles.remove(process.env.UNREGISTER_ID);
     }
 
     if(command === 'play') {
@@ -675,7 +673,7 @@ client.on('message', async message => {
     }
 
     if (command === 'lock') {
-        let everyone = message.member.guild.roles.cache.get('332472484572037124')
+        let everyone = message.member.guild.roles.cache.get(process.env.EVERYONE_ID)
         message.member.voice.channel.updateOverwrite(everyone, {
             CONNECT: false
         })
@@ -695,7 +693,7 @@ client.on('message', async message => {
     }
 
     if (command === 'unlock') {
-        let everyone = message.member.guild.roles.cache.get('332472484572037124')
+        let everyone = message.member.guild.roles.cache.get(process.env.EVERYONE_ID)
         message.member.voice.channel.updateOverwrite(everyone, {
             CONNECT: true
         })
